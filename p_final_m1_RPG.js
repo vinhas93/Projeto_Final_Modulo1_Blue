@@ -17,7 +17,7 @@ do {
     let action; // Escolha de ações
     let resp; // Resposta ao convite na função dailyEvent
     let recurrency; // Checa se o dailyEvent ja aconteceu no dia
-
+    let Hosp; // checa se o jogador estava hospitalizado no dia da apresentação
     // Funções de sleep e arredondar (utilizada caso algum status passe de 100)
     function sleep(milliseconds) {
         let start = new Date().getTime();
@@ -631,14 +631,16 @@ Você foi Demitido!
         },
         Replay: function () {
             do {
-                replay = prompt('Deseja jogar novamente? ').toLowerCase();
+                console.log(`Deseja jogar novamente?
+    1) Sim              2)Não`)
+                replay = prompt('R:').toLowerCase();
                 sleep(250);
-                while (replay !== 'sim' && replay !== 'nao') {
+                if (replay !== 'sim' && replay !== 'nao' && replay !== '1' && replay !== '2') {
                     console.log('Resposta inválida');
                     sleep(250);
-                    break;
+                   
                 }
-            } while (replay !== 'sim' && replay !== 'nao');
+            } while (replay !== 'sim' && replay !== 'nao' && replay !== '1' && replay !== '2');
             return replay;
         },
     };
@@ -682,9 +684,12 @@ no caminho.`,
 com o seu trabalho e com o desenvolvimento do projeto. 
 Você sofrerá penalidades caso qualquer um dos status
 (Saciedade, Felicidade, Vitalidade, Higiene) chegue a 0.
+
     No Fácil: Você perderá 1 dia.
     No Médio: Você perderá 2 dias.
     No Difícil: Você perderá o jogo.
+
+Atenção: Você perde status com a passagem de tempo!!!!
 `);
 
         sleep(1500);
@@ -819,7 +824,7 @@ acessá-la digitando 0 na escolha de ações.
     3)Estudar:              2 horas         (Felicidade - ${
         10 * mode + 5
     } / Vitalidade - ${5 * mode + 5} / Projeto + 10%)              
-    4)Jogar jokenpô:       1 horas         (Felicidade + ${
+    4)Jogar jokenpô:        1 horas         (Felicidade + ${
         45 / mode
     } / Vitalidade - ${5 * mode})
     5)Trabalhar:            2 horas         (Felicidade - ${
@@ -871,9 +876,11 @@ acessá-la digitando 0 na escolha de ações.
             >>>>> ESSA AÇÃO NÃO FAZ SENTIDO. <<<<<
                     `);
                 }
+                sleep(1000)
                 Testes.checkStatus();
                 if (death == true) {
                     if (mode == 2 || mode == 1) {
+                        sleep(1000)
                         console.log(`Pra sua sorte, seu vizinho percebeu o que estava acontecendo e chamou uma ambulância.
 Você foi levado ao Hospital mais próximo, tomou medicamentos e foi liberado após ${
                             mode * 24
@@ -881,6 +888,14 @@ Você foi levado ao Hospital mais próximo, tomou medicamentos e foi liberado ap
                         `);
                         sleep(3000);
                         day += 1 * mode;
+                        if (day > 7){
+                            Hosp = true
+                            sleep(1000)
+                            console.log(`Você estava hospitalizado no dia da apresentação.
+                            `)
+                            sleep(1000)
+                        }
+                        
                         death = false;
                     } else if (mode == 3) {
                         console.log(`Você cai sozinho e bate sua cabeça... 
@@ -900,23 +915,35 @@ Não havia ninguém por perto para lhe socorrer.
                 break;
             }
             recurrency = false;
+            if (Hosp == true){
+                break;
+            }
         }
-
+        if (Hosp == true){
+            break;
+        }
         Testes.descanso();
         sleep(5000);
         player.Vitalidade = 100;
         player['Horas Trabalhadas:'] = 0;
     }
-    if (death == false) {
+    if (death == false && Hosp == false) {
         Testes.relatorio();
+        sleep(2000);
         Testes.promocao();
-    } else {
-        console.log(`Você morreu!`);
+        sleep(4000);
+    } else if (Hosp == true) {
+        console.log(`Você foi demitido!
+        `);
+        sleep(2000);
+    } else{
+        console.log(`Você morreu!
+        `);
         sleep(2000);
     }
     // end game
     Testes.Replay();
-} while (replay == 'sim');
+} while (replay == 'sim' || replay == '1');
 {
     console.log(`Encerrando Project: Life!
   `);
